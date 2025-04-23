@@ -17,7 +17,12 @@
 
         <button type="submit">Iniciar sesión</button>
     </form>
+
     <p>¿No tienes cuenta? <a href="{{ url_for('register') }}">Registrarse aquí</a></p>
+
+    {% if registro_exitoso %}
+        <p class="success-message">Registro exitoso. Ahora puedes iniciar sesión.</p>
+    {% endif %}
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

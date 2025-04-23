@@ -1,51 +1,82 @@
-body {
-    font-family: Arial, sans-serif;
+/* styles.css */
+body, html {
+    height: 100%;
     margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+    background-color: #add5fa; /* Azul de fondo */
 }
 
-h2 {
-    text-align: center;
-    margin-top: 20px;
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #686466; /* Color de las letras */
+    flex-direction: column;
 }
 
 form {
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 20px;
     background-color: #fff;
-    border-radius: 10px;
+    padding: 20px;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #686466; /* Color de las letras */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #686466; /* Color de las letras */
 }
 
 input {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     margin: 10px 0;
-    border-radius: 5px;
     border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 button {
     width: 100%;
     padding: 10px;
-    background-color: #4CAF50;
+    background-color: #b3e099; /* Verde para los botones */
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #b5ce88; /* Verde 2 para el hover del botón */
 }
 
-ul {
-    list-style: none;
-    color: red;
+p {
+    text-align: center; /* Centra el texto */
+    font-size: 14px;
+    margin-top: 20px;
+    color: #686466; /* Color de las letras */
 }
 
-ul li.success {
-    color: green;
+p a {
+    text-decoration: none;
+    color: #686466; /* Color de las letras */
+}
+
+p a:hover {
+    text-decoration: underline;
+    color: #b5ce88; /* Verde 2 al pasar el mouse */
+}
+
+/* Para el mensaje de registro exitoso */
+.success-message {
+    text-align: center;
+    font-size: 16px;
+    color: #b3e099; /* Verde para el mensaje de éxito */
+    margin-top: 20px;
 }
