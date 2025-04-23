@@ -1,16 +1,16 @@
-/* styles.css */
+
 body, html {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #add5fa; /* Azul de fondo */
+    background-color: #add5fa; 
 }
 
 body {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #686466; /* Color de las letras */
+    color: #686466;
     flex-direction: column;
 }
 
@@ -25,13 +25,13 @@ form {
 
 h2 {
     margin-bottom: 20px;
-    color: #686466; /* Color de las letras */
+    color: #686466; 
 }
 
 label {
     display: block;
     margin-bottom: 5px;
-    color: #686466; /* Color de las letras */
+    color: #686466; 
 }
 
 input {
@@ -53,30 +53,30 @@ button {
 }
 
 button:hover {
-    background-color: #b5ce88; /* Verde 2 para el hover del botón */
+    background-color: #b5ce88;
 }
 
 p {
-    text-align: center; /* Centra el texto */
+    text-align: center; 
     font-size: 14px;
     margin-top: 20px;
-    color: #686466; /* Color de las letras */
+    color: #686466; 
 }
 
 p a {
     text-decoration: none;
-    color: #686466; /* Color de las letras */
+    color: #686466; 
 }
 
 p a:hover {
     text-decoration: underline;
-    color: #b5ce88; /* Verde 2 al pasar el mouse */
+    color: #b5ce88; 
 }
 
-/* Para el mensaje de registro exitoso */
+
 .success-message {
     text-align: center;
     font-size: 16px;
-    color: #b3e099; /* Verde para el mensaje de éxito */
+    color: #b3e099; 
     margin-top: 20px;
 }

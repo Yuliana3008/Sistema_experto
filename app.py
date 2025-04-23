@@ -5,12 +5,12 @@ from database import conectar_bd
 app = Flask(__name__)
 app.secret_key = 'machuelos'  # Necesaria para mostrar mensajes flash
 
-# Ruta raíz: redirige al login
+
 @app.route('/')
 def inicio():
     return redirect(url_for('login'))
 
-# Ruta para la página de login
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
