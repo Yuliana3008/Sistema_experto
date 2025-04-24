@@ -1,0 +1,46 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Médico</title>
+    <style>
+        body {
+            background-color: #add5fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background-color: #005c99;
+            padding: 1em;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        main {
+            padding: 40px;
+            text-align: center;
+        }
+        h1 {
+            color: #686466;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('pacientes') }}">Pacientes</a>
+        <a href="{{ url_for('enfermedades') }}">Enfermedades</a>
+        <a href="{{ url_for('pruebas') }}">Pruebas</a>
+        <a href="{{ url_for('diagnostico') }}">Diagnóstico</a>
+    </nav>
+    <main>
+        <h1>¡Bienvenido al Dashboard del médico!</h1>
+        <p>Selecciona una opción del menú para comenzar.</p>
+    </main>
+</body>
+</html>

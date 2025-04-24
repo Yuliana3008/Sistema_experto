@@ -64,7 +64,25 @@ def register():
 # Ruta para el dashboard
 @app.route('/dashboard')
 def dashboard():
-    return "¡Bienvenido al Dashboard del médico!"
+    return render_template('dashboard.html')
+
+@app.route('/dashboard/pacientes')
+def pacientes():
+    return render_template('pacientes.html')
+
+@app.route('/dashboard/enfermedades')
+def enfermedades():
+    return render_template('enfermedades.html')
+
+@app.route('/dashboard/pruebas')
+def pruebas():
+    return render_template('pruebas.html')
+
+@app.route('/dashboard/diagnostico')
+def diagnostico():
+    return render_template('diagnostico.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
