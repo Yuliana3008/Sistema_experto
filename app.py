@@ -74,13 +74,74 @@ def pacientes():
 def enfermedades():
     return render_template('enfermedades.html')
 
-@app.route('/dashboard/pruebas')
-def pruebas():
-    return render_template('pruebas.html')
 
 @app.route('/dashboard/diagnostico')
 def diagnostico():
     return render_template('diagnostico.html')
+
+@app.route('/dashboard/pruebas', methods=['GET', 'POST'])
+def pruebas_view():
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    # Obtener enfermedades
+    cursor.execute("SELECT id_enfermedad, nombre_enfermedad FROM enfermedad")
+    enfermedades = cursor.fetchall()
+
+    # Obtener pacientes
+    cursor.execute("SELECT id_paciente, nombre FROM paciente")
+    pacientes = cursor.fetchall()
+
+    # Obtener pruebas
+    cursor.execute("SELECT * FROM prueba_laboratorio")
+    pruebas_laboratorio = cursor.fetchall()
+    cursor.execute("SELECT * FROM prueba_post_mortem")
+    pruebas_post_mortem = cursor.fetchall()
+
+    # Manejo de formularios
+    if request.method == 'POST':
+        if 'agregar_laboratorio' in request.form:
+            nombre_prueba = request.form['nombre_prueba_laboratorio']
+            descripcion = request.form['descripcion_laboratorio']
+            resultado = request.form['resultado_laboratorio']
+            id_enfermedad = request.form['id_enfermedad_laboratorio']
+            id_paciente = request.form.get('id_paciente_laboratorio') or None
+
+            cursor.execute("""
+                INSERT INTO prueba_laboratorio (nombre_prueba, descripcion, resultado, id_enfermedad, id_paciente)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (nombre_prueba, descripcion, resultado, id_enfermedad, id_paciente))
+            conexion.commit()
+            flash("Prueba de laboratorio agregada exitosamente.", "success")
+
+        elif 'agregar_postmortem' in request.form:
+            nombre_prueba = request.form['nombre_prueba_postmortem']
+            descripcion = request.form['descripcion_postmortem']
+            resultado = request.form['resultado_postmortem']
+            id_enfermedad = request.form['id_enfermedad_postmortem']
+
+            cursor.execute("""
+                INSERT INTO prueba_post_mortem (nombre_prueba, descripcion, resultado, id_enfermedad)
+                VALUES (%s, %s, %s, %s)
+            """, (nombre_prueba, descripcion, resultado, id_enfermedad))
+            conexion.commit()
+            flash("Prueba post-mortem agregada exitosamente.", "success")
+
+    cursor.close()
+    conexion.close()
+
+    return render_template(
+        'pruebas.html',
+        pruebas_laboratorio=pruebas_laboratorio,
+        pruebas_post_mortem=pruebas_post_mortem,
+        enfermedades=[{'id_enfermedad': e[0], 'nombre_enfermedad': e[1]} for e in enfermedades],
+        pacientes=[{'id_paciente': p[0], 'nombre': p[1]} for p in pacientes]
+    )
+
+
+
+
+
 
 
 
