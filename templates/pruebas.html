@@ -83,6 +83,16 @@
         .prueba-actions {
             margin-top: 10px;
         }
+        .prueba-actions form,
+        .prueba-actions a {
+            display: inline-block;
+        }
+        .prueba-actions a button {
+            background-color: #ffa500;
+        }
+        .prueba-actions a button:hover {
+            background-color: #cc8400;
+        }
     </style>
 </head>
 <body>
@@ -122,7 +132,7 @@
             <select name="id_paciente_laboratorio">
                 <option value="">Selecciona un paciente (opcional)</option>
                 {% for paciente in pacientes %}
-                    <option value="{{ paciente.id_paciente }}">{{ paciente.nombre_paciente }}</option>
+                    <option value="{{ paciente.id_paciente }}">{{ paciente.nombre }}</option>
                 {% endfor %}
             </select>
             <button type="submit" name="agregar_laboratorio">Agregar Prueba de Laboratorio</button>
@@ -151,7 +161,10 @@
                     Descripción: {{ prueba[2] }}<br>
                     Resultado: {{ prueba[3] }}
                     <div class="prueba-actions">
-                        <form method="POST" action="{{ url_for('eliminar_prueba_laboratorio', id=prueba[0]) }}" style="display:inline;">
+                        <a href="{{ url_for('editar_prueba_laboratorio', id=prueba[0]) }}">
+                            <button type="button">Editar</button>
+                        </a>
+                        <form method="POST" action="{{ url_for('eliminar_prueba_laboratorio', id=prueba[0]) }}">
                             <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar esta prueba?')">Eliminar</button>
                         </form>
                     </div>
@@ -167,7 +180,10 @@
                     Descripción: {{ prueba[2] }}<br>
                     Resultado: {{ prueba[3] }}
                     <div class="prueba-actions">
-                        <form method="POST" action="{{ url_for('eliminar_prueba_postmortem', id=prueba[0]) }}" style="display:inline;">
+                        <a href="{{ url_for('editar_prueba_postmortem', id=prueba[0]) }}">
+                            <button type="button">Editar</button>
+                        </a>
+                        <form method="POST" action="{{ url_for('eliminar_prueba_postmortem', id=prueba[0]) }}">
                             <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar esta prueba?')">Eliminar</button>
                         </form>
                     </div>

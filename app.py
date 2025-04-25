@@ -163,6 +163,74 @@ def eliminar_prueba_postmortem(id):
     flash("Prueba post-mortem eliminada.", "success")
     return redirect(url_for('pruebas_view'))
 
+@app.route('/editar_prueba_laboratorio/<int:id>', methods=['GET', 'POST'])
+def editar_prueba_laboratorio(id):
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    if request.method == 'POST':
+        nombre = request.form['nombre_prueba_laboratorio']
+        descripcion = request.form['descripcion_laboratorio']
+        resultado = request.form['resultado_laboratorio']
+        id_enfermedad = request.form['id_enfermedad_laboratorio']
+        id_paciente = request.form.get('id_paciente_laboratorio') or None
+
+        cursor.execute("""
+            UPDATE prueba_laboratorio
+            SET nombre_prueba = %s, descripcion = %s, resultado = %s, id_enfermedad = %s, id_paciente = %s
+            WHERE id_prueba_laboratorio = %s
+        """, (nombre, descripcion, resultado, id_enfermedad, id_paciente, id))
+        conexion.commit()
+        flash("Prueba de laboratorio actualizada.", "success")
+        return redirect(url_for('pruebas_view'))
+    
+    # Si es GET, obtener datos actuales de la prueba
+    cursor.execute("SELECT * FROM prueba_laboratorio WHERE id_prueba_laboratorio = %s", (id,))
+    prueba = cursor.fetchone()
+
+    cursor.execute("SELECT id_enfermedad, nombre_enfermedad FROM enfermedad")
+    enfermedades = cursor.fetchall()
+    cursor.execute("SELECT id_paciente, nombre FROM paciente")
+    pacientes = cursor.fetchall()
+
+    cursor.close()
+    conexion.close()
+
+    return render_template('editar_laboratorio.html', prueba=prueba, enfermedades=enfermedades, pacientes=pacientes)
+
+
+@app.route('/editar_prueba_postmortem/<int:id>', methods=['GET', 'POST'])
+def editar_prueba_postmortem(id):
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    if request.method == 'POST':
+        nombre = request.form['nombre_prueba_postmortem']
+        descripcion = request.form['descripcion_postmortem']
+        resultado = request.form['resultado_postmortem']
+        id_enfermedad = request.form['id_enfermedad_postmortem']
+
+        cursor.execute("""
+            UPDATE prueba_post_mortem
+            SET nombre_prueba = %s, descripcion = %s, resultado = %s, id_enfermedad = %s
+            WHERE id_prueba_post = %s
+        """, (nombre, descripcion, resultado, id_enfermedad, id))
+        conexion.commit()
+        flash("Prueba post-mortem actualizada.", "success")
+        return redirect(url_for('pruebas_view'))
+
+    cursor.execute("SELECT * FROM prueba_post_mortem WHERE id_prueba_post = %s", (id,))
+    prueba = cursor.fetchone()
+
+    cursor.execute("SELECT id_enfermedad, nombre_enfermedad FROM enfermedad")
+    enfermedades = cursor.fetchall()
+
+    cursor.close()
+    conexion.close()
+
+    return render_template('editar_postmortem.html', prueba=prueba, enfermedades=enfermedades)
+
+
 
 
 
