@@ -139,6 +139,31 @@ def pruebas_view():
     )
 
 
+# Eliminar prueba de laboratorio
+@app.route('/eliminar_prueba_laboratorio/<int:id>', methods=['POST'])
+def eliminar_prueba_laboratorio(id):
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+    cursor.execute("DELETE FROM prueba_laboratorio WHERE id_prueba_laboratorio = %s", (id,))
+    conexion.commit()
+    cursor.close()
+    conexion.close()
+    flash("Prueba de laboratorio eliminada.", "success")
+    return redirect(url_for('pruebas_view'))
+
+# Eliminar prueba post-mortem
+@app.route('/eliminar_prueba_postmortem/<int:id>', methods=['POST'])
+def eliminar_prueba_postmortem(id):
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+    cursor.execute("DELETE FROM prueba_post_mortem WHERE id_prueba_post = %s", (id,))
+    conexion.commit()
+    cursor.close()
+    conexion.close()
+    flash("Prueba post-mortem eliminada.", "success")
+    return redirect(url_for('pruebas_view'))
+
+
 
 
 

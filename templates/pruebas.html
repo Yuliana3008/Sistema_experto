@@ -24,15 +24,17 @@
             padding: 40px;
             text-align: center;
         }
-        h1 {
+        h1, h2 {
             color: #686466;
         }
         form {
-            margin: 20px;
+            margin: 20px auto;
             padding: 20px;
             border-radius: 8px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            text-align: left;
         }
         input, select, textarea {
             width: 100%;
@@ -47,15 +49,17 @@
             color: white;
             border: none;
             border-radius: 4px;
+            cursor: pointer;
         }
         button:hover {
             background-color: #003f73;
         }
         .flash-message {
-            margin: 20px;
+            margin: 20px auto;
             padding: 10px;
             border-radius: 5px;
             text-align: center;
+            max-width: 600px;
         }
         .flash-message.success {
             background-color: #28a745;
@@ -64,6 +68,20 @@
         .flash-message.danger {
             background-color: #dc3545;
             color: white;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .prueba-actions {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -97,16 +115,14 @@
             <textarea name="resultado_laboratorio" placeholder="Resultado" required></textarea>
             <select name="id_enfermedad_laboratorio" required>
                 <option value="">Selecciona una enfermedad</option>
-                <!-- Aquí debes llenar con las enfermedades desde tu base de datos -->
                 {% for enfermedad in enfermedades %}
                     <option value="{{ enfermedad.id_enfermedad }}">{{ enfermedad.nombre_enfermedad }}</option>
                 {% endfor %}
             </select>
             <select name="id_paciente_laboratorio">
                 <option value="">Selecciona un paciente (opcional)</option>
-                <!-- Aquí puedes agregar los pacientes de tu base de datos si es necesario -->
                 {% for paciente in pacientes %}
-                    <option value="{{ paciente.id_paciente }}">{{ paciente.nombre }}</option>
+                    <option value="{{ paciente.id_paciente }}">{{ paciente.nombre_paciente }}</option>
                 {% endfor %}
             </select>
             <button type="submit" name="agregar_laboratorio">Agregar Prueba de Laboratorio</button>
@@ -131,8 +147,14 @@
         <ul>
             {% for prueba in pruebas_laboratorio %}
                 <li>
-                    {{ prueba[1] }} (Resultado: {{ prueba[3] }})
-                    <!-- Aquí podrías agregar botones para editar o eliminar -->
+                    <strong>{{ prueba[1] }}</strong><br>
+                    Descripción: {{ prueba[2] }}<br>
+                    Resultado: {{ prueba[3] }}
+                    <div class="prueba-actions">
+                        <form method="POST" action="{{ url_for('eliminar_prueba_laboratorio', id=prueba[0]) }}" style="display:inline;">
+                            <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar esta prueba?')">Eliminar</button>
+                        </form>
+                    </div>
                 </li>
             {% endfor %}
         </ul>
@@ -141,8 +163,14 @@
         <ul>
             {% for prueba in pruebas_post_mortem %}
                 <li>
-                    {{ prueba[1] }} (Resultado: {{ prueba[3] }})
-                    <!-- Aquí podrías agregar botones para editar o eliminar -->
+                    <strong>{{ prueba[1] }}</strong><br>
+                    Descripción: {{ prueba[2] }}<br>
+                    Resultado: {{ prueba[3] }}
+                    <div class="prueba-actions">
+                        <form method="POST" action="{{ url_for('eliminar_prueba_postmortem', id=prueba[0]) }}" style="display:inline;">
+                            <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar esta prueba?')">Eliminar</button>
+                        </form>
+                    </div>
                 </li>
             {% endfor %}
         </ul>
