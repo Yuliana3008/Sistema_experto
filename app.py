@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+
 import mysql.connector
 from database import conectar_bd
 
@@ -75,9 +76,52 @@ def enfermedades():
     return render_template('enfermedades.html')
 
 
-@app.route('/dashboard/diagnostico')
+@app.route('/dashboard/diagnostico', methods=['GET', 'POST'])
 def diagnostico():
-    return render_template('diagnostico.html')
+    # Conectar a la base de datos
+    conexion = conectar_bd()
+    cursor = conexion.cursor(dictionary=True)
+
+    # Obtener pacientes completos desde la base de datos
+    cursor.execute("SELECT id_paciente, nombre, apellido, fecha_nacimiento, genero, direccion FROM paciente")
+    pacientes = cursor.fetchall()  # Recuperamos todos los pacientes
+
+    # Cerrar la conexión
+    cursor.close()
+    conexion.close()
+
+    # Pasar la lista de pacientes a la plantilla
+    return render_template('diagnostico.html', pacientes=pacientes)
+
+
+# Ruta para obtener los datos de un paciente por su ID (API)
+@app.route('/api/paciente/<int:id>', methods=['GET'])
+def get_paciente(id):
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    # Obtener datos del paciente
+    cursor.execute("SELECT nombre, apellido, fecha_nacimiento, genero, direccion FROM paciente WHERE id_paciente = %s", (id,))
+    paciente = cursor.fetchone()
+    
+    # Si no se encuentra el paciente, devolvemos error
+    if not paciente:
+        return jsonify({"error": "Paciente no encontrado"}), 404
+
+    # Devolvemos los datos en formato JSON
+    paciente_data = {
+        "nombre": paciente[0],
+        "apellido": paciente[1],
+        "fecha_nacimiento": paciente[2].strftime('%Y-%m-%d') if paciente[2] else "",
+        "genero": paciente[3],
+        "direccion": paciente[4]
+    }
+
+    cursor.close()
+    conexion.close()
+
+    return jsonify(paciente_data)
+
 
 @app.route('/dashboard/pruebas', methods=['GET', 'POST'])
 def pruebas_view():
@@ -229,13 +273,6 @@ def editar_prueba_postmortem(id):
     conexion.close()
 
     return render_template('editar_postmortem.html', prueba=prueba, enfermedades=enfermedades)
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

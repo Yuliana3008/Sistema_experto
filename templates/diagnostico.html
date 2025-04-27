@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnóstico - Registro de Paciente</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+        }
+        nav {
+            background-color: #005c99;
+            padding: 1em;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        main {
+            padding: 40px;
+            text-align: center;
+        }
+        h1, h2 {
+            color: #686466;
+        }
+        form {
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            text-align: left;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #005c99;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #003f73;
+        }
+        .flash-message {
+            margin: 20px auto;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            max-width: 600px;
+        }
+        .flash-message.success {
+            background-color: #28a745;
+            color: white;
+        }
+        .flash-message.danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('pacientes') }}">Pacientes</a>
+        <a href="{{ url_for('enfermedades') }}">Enfermedades</a>
+        <a href="{{ url_for('pruebas_view') }}">Pruebas</a>
+        <a href="{{ url_for('diagnostico') }}">Diagnóstico</a>
+    </nav>
+
+    <!-- Mostrar mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        <h1>Diagnóstico Inteligente</h1>
+
+        <form method="POST">
+            <h2>Datos del Paciente</h2>
+
+            <!-- Selección de paciente existente -->
+            <label>Seleccionar Paciente Existente</label>
+            <select name="paciente_existente" id="paciente_existente" onchange="autocompletarPaciente(this.value)">
+                <option value="">-- Selecciona un paciente --</option>
+                {% for paciente in pacientes %}
+                    <option value="{{ paciente.id_paciente }}">{{ paciente.nombre }} {{ paciente.apellido }}</option>
+
+                {% endfor %}
+            </select>
+
+            <label>Nombre</label>
+            <input type="text" name="nombre" placeholder="Nombre del paciente" required>
+
+            <label>Apellido</label>
+            <input type="text" name="apellido" placeholder="Apellido del paciente" required>
+
+            <label>Fecha de Nacimiento</label>
+            <input type="date" name="fecha_nacimiento" required>
+
+            <label>Género</label>
+            <select name="genero" required>
+                <option value="">Selecciona Género</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+            </select>
+
+            <label>Dirección</label>
+            <input type="text" name="direccion" placeholder="Dirección del paciente" required>
+
+            <h2>Signos y Síntomas</h2>
+            <label>Síntomas (Selecciona uno o más)</label>
+            <select name="sintomas_existentes" multiple size="5">
+                {% for sintoma in sintomas %}
+                    <option value="{{ sintoma.id }}">{{ sintoma.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Agregar nuevos síntomas (separados por coma)</label>
+            <textarea name="sintomas_nuevos" placeholder="Ej: Dolor muscular, fiebre..." rows="2"></textarea>
+
+            <label>Signos (Selecciona uno o más)</label>
+            <select name="signos_existentes" multiple size="5">
+                {% for signo in signos %}
+                    <option value="{{ signo.id }}">{{ signo.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Agregar nuevos signos (separados por coma)</label>
+            <textarea name="signos_nuevos" placeholder="Ej: Taquicardia, presión alta..." rows="2"></textarea>
+
+            <h2>Pruebas de Laboratorio (Opcional)</h2>
+            <label>Resultados de Pruebas</label>
+            <textarea name="pruebas_laboratorio" placeholder="Ej: Hemograma alterado, PCR elevado..." rows="3"></textarea>
+
+            <h2>Pruebas Post-Mortem (Opcional)</h2>
+            <label>Resultados de Pruebas Post-Mortem</label>
+            <textarea name="pruebas_postmortem" placeholder="Ej: Lesiones pulmonares extensas, necrosis tisular..." rows="3"></textarea>
+
+            <label>Observaciones</label>
+            <textarea name="observaciones" rows="4" placeholder="Observaciones adicionales..."></textarea>
+
+            <button type="submit">Generar Diagnóstico</button>
+        </form>
+    </main>
+
+    <!-- Script para autocompletar datos del paciente -->
+    <script>
+    function autocompletarPaciente(pacienteId) {
+        if (!pacienteId) return;  // Si no hay paciente seleccionado, no hacer nada
+
+        fetch(`/api/paciente/${pacienteId}`)  // Suponiendo que la API usa el ID para devolver los datos del paciente
+            .then(response => response.json())
+            .then(data => {
+                // Rellenar los campos del formulario con los datos obtenidos
+                document.querySelector('input[name="nombre"]').value = data.nombre;
+                document.querySelector('input[name="apellido"]').value = data.apellido;
+                document.querySelector('input[name="fecha_nacimiento"]').value = data.fecha_nacimiento;
+                document.querySelector('select[name="genero"]').value = data.genero;
+                document.querySelector('input[name="direccion"]').value = data.direccion;
+            })
+            .catch(error => {
+                console.error('Error al obtener datos del paciente:', error);
+            });
+    }
+    </script>
+</body>
+</html>
