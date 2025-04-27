@@ -93,6 +93,12 @@ def diagnostico():
      # Obtener síntomas
     cursor.execute("SELECT id_sintoma, nombre_sintoma FROM sintoma")
     sintomas = cursor.fetchall()
+        # Obtener pruebas de laboratorio existentes
+    cursor.execute("SELECT id_prueba_laboratorio, nombre_prueba FROM prueba_laboratorio")
+    pruebas_laboratorio = cursor.fetchall()  # Lista de pruebas disponibles
+
+    cursor.execute("SELECT id_prueba_post, nombre_prueba FROM prueba_post_mortem")
+    pruebas_postmortem = cursor.fetchall()
 
     # Cerrar la conexión
     cursor.close()
@@ -100,7 +106,7 @@ def diagnostico():
 
     # Pasar la lista de pacientes a la plantilla
     return render_template('diagnostico.html', pacientes=pacientes,signos=signos,
-        sintomas=sintomas)
+        sintomas=sintomas, pruebas_laboratorio=pruebas_laboratorio, pruebas_postmortem=pruebas_postmortem)
  
 
 

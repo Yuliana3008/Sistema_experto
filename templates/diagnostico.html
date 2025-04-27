@@ -113,7 +113,6 @@
                 <option value="">-- Selecciona un paciente --</option>
                 {% for paciente in pacientes %}
                     <option value="{{ paciente.id_paciente }}">{{ paciente.nombre }} {{ paciente.apellido }}</option>
-
                 {% endfor %}
             </select>
 
@@ -145,8 +144,6 @@
                 {% endfor %}
             </select>
 
-            
-
             <label>Signos (Selecciona uno o más)</label>
             <select name="signos_existentes" multiple size="5">
                 {% for signo in signos %}
@@ -154,15 +151,21 @@
                 {% endfor %}
             </select>
 
-            
+            <h2>Pruebas de Laboratorio (Selecciona uno o más)</h2>
+            <label>Pruebas de Laboratorio</label>
+            <select name="pruebas_laboratorio" multiple size="5">
+                {% for prueba in pruebas_laboratorio %}
+                    <option value="{{ prueba.id_prueba_laboratorio }}">{{ prueba.nombre_prueba }}</option>
+                {% endfor %}
+            </select>
 
-            <h2>Pruebas de Laboratorio (Opcional)</h2>
-            <label>Resultados de Pruebas</label>
-            <textarea name="pruebas_laboratorio" placeholder="Ej: Hemograma alterado, PCR elevado..." rows="3"></textarea>
-
-            <h2>Pruebas Post-Mortem (Opcional)</h2>
-            <label>Resultados de Pruebas Post-Mortem</label>
-            <textarea name="pruebas_postmortem" placeholder="Ej: Lesiones pulmonares extensas, necrosis tisular..." rows="3"></textarea>
+            <h2>Pruebas Post-Mortem (Selecciona uno o más)</h2>
+            <label>Pruebas Post-Mortem</label>
+            <select name="pruebas_postmortem" multiple size="5">
+                {% for prueba_postmortem in pruebas_postmortem %}
+                    <option value="{{ prueba_postmortem.id_prueba_post }}">{{ prueba_postmortem.nombre_prueba }}</option>
+                {% endfor %}
+            </select>
 
             <label>Observaciones</label>
             <textarea name="observaciones" rows="4" placeholder="Observaciones adicionales..."></textarea>
