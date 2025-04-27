@@ -86,12 +86,22 @@ def diagnostico():
     cursor.execute("SELECT id_paciente, nombre, apellido, fecha_nacimiento, genero, direccion FROM paciente")
     pacientes = cursor.fetchall()  # Recuperamos todos los pacientes
 
+
+    # Obtener signos
+    cursor.execute("SELECT id_signo, nombre_signo FROM signo")
+    signos = cursor.fetchall()
+     # Obtener síntomas
+    cursor.execute("SELECT id_sintoma, nombre_sintoma FROM sintoma")
+    sintomas = cursor.fetchall()
+
     # Cerrar la conexión
     cursor.close()
     conexion.close()
 
     # Pasar la lista de pacientes a la plantilla
-    return render_template('diagnostico.html', pacientes=pacientes)
+    return render_template('diagnostico.html', pacientes=pacientes,signos=signos,
+        sintomas=sintomas)
+ 
 
 
 # Ruta para obtener los datos de un paciente por su ID (API)

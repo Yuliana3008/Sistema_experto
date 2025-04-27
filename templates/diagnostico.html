@@ -141,22 +141,20 @@
             <label>Síntomas (Selecciona uno o más)</label>
             <select name="sintomas_existentes" multiple size="5">
                 {% for sintoma in sintomas %}
-                    <option value="{{ sintoma.id }}">{{ sintoma.nombre }}</option>
+                    <option value="{{ sintoma.id }}">{{ sintoma.nombre_sintoma }}</option>
                 {% endfor %}
             </select>
 
-            <label>Agregar nuevos síntomas (separados por coma)</label>
-            <textarea name="sintomas_nuevos" placeholder="Ej: Dolor muscular, fiebre..." rows="2"></textarea>
+            
 
             <label>Signos (Selecciona uno o más)</label>
             <select name="signos_existentes" multiple size="5">
                 {% for signo in signos %}
-                    <option value="{{ signo.id }}">{{ signo.nombre }}</option>
+                    <option value="{{ signo.id }}">{{ signo.nombre_signo }}</option>
                 {% endfor %}
             </select>
 
-            <label>Agregar nuevos signos (separados por coma)</label>
-            <textarea name="signos_nuevos" placeholder="Ej: Taquicardia, presión alta..." rows="2"></textarea>
+            
 
             <h2>Pruebas de Laboratorio (Opcional)</h2>
             <label>Resultados de Pruebas</label>
