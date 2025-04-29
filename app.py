@@ -87,12 +87,23 @@ def diagnostico():
     pacientes = cursor.fetchall()  # Recuperamos todos los pacientes
 
 
-    # Obtener signos
-    cursor.execute("SELECT id_signo, nombre_signo FROM signo")
-    signos = cursor.fetchall()
-     # Obtener síntomas
-    cursor.execute("SELECT id_sintoma, nombre_sintoma FROM sintoma")
+    # Obtener síntomas (sin duplicados) desde la base de datos
+    cursor.execute("""
+        SELECT MIN(id_sintoma) AS id_sintoma, nombre_sintoma
+        FROM sintoma
+        GROUP BY nombre_sintoma
+    """)
     sintomas = cursor.fetchall()
+
+    # Obtener signos (sin duplicados) desde la base de datos
+    cursor.execute("""
+        SELECT MIN(id_signo) AS id_signo, nombre_signo
+        FROM signo
+        GROUP BY nombre_signo
+    """)
+    signos = cursor.fetchall()
+
+
         # Obtener pruebas de laboratorio existentes
     cursor.execute("SELECT id_prueba_laboratorio, nombre_prueba FROM prueba_laboratorio")
     pruebas_laboratorio = cursor.fetchall()  # Lista de pruebas disponibles
