@@ -75,19 +75,67 @@ def pacientes():
 def enfermedades():
     return render_template('enfermedades.html')
 
-
 @app.route('/dashboard/diagnostico', methods=['GET', 'POST'])
 def diagnostico():
-    # Conectar a la base de datos
     conexion = conectar_bd()
     cursor = conexion.cursor(dictionary=True)
 
-    # Obtener pacientes completos desde la base de datos
+    # Obtener datos del formulario si se hizo POST
+    enfermedades_probables = []
+
+    if request.method == 'POST':
+        paciente_id = request.form['paciente']
+        signos = request.form.getlist('signos')
+        sintomas = request.form.getlist('sintomas')
+        pruebas_laboratorio = request.form.getlist('pruebas_laboratorio')
+        pruebas_postmortem = request.form.getlist('pruebas_postmortem')
+        observaciones = request.form['observaciones']
+
+        enfermedad_scores = {}
+
+        # Función para contar coincidencias por enfermedad
+        def contar_coincidencias(query, items):
+            for item in items:
+                cursor.execute(query, (item,))
+                for row in cursor.fetchall():
+                    enf_id = row['id_enfermedad']
+                    enfermedad_scores[enf_id] = enfermedad_scores.get(enf_id, 0) + 1
+
+        # Consultas para signos, síntomas, pruebas
+        if signos:
+            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_signo WHERE id_signo = %s", signos)
+        if sintomas:
+            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_sintoma WHERE id_sintoma = %s", sintomas)
+        if pruebas_laboratorio:
+            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_prueba WHERE id_prueba_laboratorio = %s", pruebas_laboratorio)
+        if pruebas_postmortem:
+            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_pruebapost WHERE id_prueba_post = %s", pruebas_postmortem)
+
+        # Obtener las 3 enfermedades con mayor puntuación
+        top_enfermedades = sorted(enfermedad_scores.items(), key=lambda x: x[1], reverse=True)[:3]
+
+        # Guardar los diagnósticos
+        for enfermedad_id, puntuacion in top_enfermedades:
+            cursor.execute(
+                "INSERT INTO diagnostico (id_paciente, id_enfermedad, descripcion_diagnostico) VALUES (%s, %s, %s)",
+                (paciente_id, enfermedad_id, observaciones)
+            )
+
+        conexion.commit()
+
+        # Obtener nombres de las enfermedades
+        for enfermedad_id, _ in top_enfermedades:
+            cursor.execute("SELECT nombre_enfermedad FROM enfermedad WHERE id_enfermedad = %s", (enfermedad_id,))
+            nombre = cursor.fetchone()
+            if nombre:
+                enfermedades_probables.append(nombre['nombre_enfermedad'])
+
+        flash("Diagnóstico generado correctamente.", "success")
+
+    # Obtener datos para mostrar el formulario
     cursor.execute("SELECT id_paciente, nombre, apellido, fecha_nacimiento, genero, direccion FROM paciente")
-    pacientes = cursor.fetchall()  # Recuperamos todos los pacientes
+    pacientes = cursor.fetchall()
 
-
-    # Obtener síntomas (sin duplicados) desde la base de datos
     cursor.execute("""
         SELECT MIN(id_sintoma) AS id_sintoma, nombre_sintoma
         FROM sintoma
@@ -95,7 +143,6 @@ def diagnostico():
     """)
     sintomas = cursor.fetchall()
 
-    # Obtener signos (sin duplicados) desde la base de datos
     cursor.execute("""
         SELECT MIN(id_signo) AS id_signo, nombre_signo
         FROM signo
@@ -103,22 +150,23 @@ def diagnostico():
     """)
     signos = cursor.fetchall()
 
-
-        # Obtener pruebas de laboratorio existentes
     cursor.execute("SELECT id_prueba_laboratorio, nombre_prueba FROM prueba_laboratorio")
-    pruebas_laboratorio = cursor.fetchall()  # Lista de pruebas disponibles
+    pruebas_laboratorio = cursor.fetchall()
 
     cursor.execute("SELECT id_prueba_post, nombre_prueba FROM prueba_post_mortem")
     pruebas_postmortem = cursor.fetchall()
 
-    # Cerrar la conexión
     cursor.close()
     conexion.close()
 
-    # Pasar la lista de pacientes a la plantilla
-    return render_template('diagnostico.html', pacientes=pacientes,signos=signos,
-        sintomas=sintomas, pruebas_laboratorio=pruebas_laboratorio, pruebas_postmortem=pruebas_postmortem)
- 
+    return render_template('diagnostico.html',
+                           pacientes=pacientes,
+                           signos=signos,
+                           sintomas=sintomas,
+                           pruebas_laboratorio=pruebas_laboratorio,
+                           pruebas_postmortem=pruebas_postmortem,
+                           enfermedades_probables=enfermedades_probables)
+
 
 
 # Ruta para obtener los datos de un paciente por su ID (API)

@@ -109,7 +109,7 @@
 
             <!-- Selección de paciente existente -->
             <label>Seleccionar Paciente Existente</label>
-            <select name="paciente_existente" id="paciente_existente" onchange="autocompletarPaciente(this.value)">
+            <select name="paciente" id="paciente_existente" onchange="autocompletarPaciente(this.value)">
                 <option value="">-- Selecciona un paciente --</option>
                 {% for paciente in pacientes %}
                     <option value="{{ paciente.id_paciente }}">{{ paciente.nombre }} {{ paciente.apellido }}</option>
@@ -138,16 +138,16 @@
 
             <h2>Signos y Síntomas</h2>
             <label>Síntomas (Selecciona uno o más)</label>
-            <select name="sintomas_existentes" multiple size="5">
+            <select name="sintomas" multiple size="5">
                 {% for sintoma in sintomas %}
-                    <option value="{{ sintoma.id }}">{{ sintoma.nombre_sintoma }}</option>
+                    <option value="{{ sintoma.id_sintoma }}">{{ sintoma.nombre_sintoma }}</option>
                 {% endfor %}
             </select>
 
             <label>Signos (Selecciona uno o más)</label>
-            <select name="signos_existentes" multiple size="5">
+            <select name="signos" multiple size="5">
                 {% for signo in signos %}
-                    <option value="{{ signo.id }}">{{ signo.nombre_signo }}</option>
+                    <option value="{{ signo.id_signo }}">{{ signo.nombre_signo }}</option>
                 {% endfor %}
             </select>
 
@@ -172,6 +172,18 @@
 
             <button type="submit">Generar Diagnóstico</button>
         </form>
+
+    
+
+    {% if enfermedades_probables %}
+        <div class="flash-message success">
+            <strong>Diagnóstico generado:</strong><br>
+            Enfermedades probables: {{ ", ".join(enfermedades_probables) }}
+        </div>
+    {% endif %}
+
+
+
     </main>
 
     <!-- Script para autocompletar datos del paciente -->
