@@ -19,14 +19,14 @@ def admin_required(f):
 from functools import wraps
 from flask import session, redirect, url_for, flash
 
-# Decorador para verificar el rol del usuario
+# Decorador 
 def rol_requerido(*roles):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if 'usuario' not in session or session['usuario']['rol'] not in roles:
                 flash('Acceso denegado. No tienes permisos suficientes.', 'danger')
-                return redirect(url_for('dashboard'))  # O cualquier otra página de redirección
+                return redirect(url_for('dashboard'))  
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -53,7 +53,7 @@ def login():
             rol = resultado[0]
             session['usuario'] = {'rol': rol}  # Almacena el rol dentro de la sesión
             flash(f"Bienvenido, {rol}", "success")
-            return redirect(url_for('dashboard'))  # Redirige a un panel de usuario
+            return redirect(url_for('dashboard'))  
         else:
             flash("Correo o contraseña incorrectos", "danger")
 
@@ -62,7 +62,7 @@ def login():
 
     return render_template('login.html')
 
-# Ruta para la página de registro
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -89,10 +89,10 @@ def register():
 
     return render_template('register.html')
 
-# Ruta para el dashboard
+# dashboard
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    # Verificar si el usuario está logueado
+    
     if 'usuario' not in session:
         return redirect(url_for('login'))  # Redirige al login si no está autenticado
 
@@ -147,7 +147,7 @@ def editar_usuario(id_usuario):
         conexion.commit()
         conexion.close()
         flash('Usuario actualizado exitosamente.', 'success')
-        return redirect(url_for('vista_usuarios'))
+        return redirect(url_for('usuarios'))
     else:
         cursor.execute("SELECT * FROM usuario WHERE id_usuario = %s", (id_usuario,))
         usuario = cursor.fetchone()
@@ -163,7 +163,7 @@ def eliminar_usuario(id_usuario):
     conexion.commit()
     conexion.close()
     flash('Usuario eliminado correctamente.', 'success')
-    return redirect(url_for('vista_usuarios'))
+    return redirect(url_for('usuarios'))
 
 
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Editar Usuario</title>
     <style>
         body {
             margin: 0;
@@ -11,8 +11,29 @@
             background: linear-gradient(to right, #cce0f4, #a3c4dc);
         }
 
+        nav {
+            background-color: #005b96;
+            display: flex;
+            justify-content: center;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        nav a {
+            color: white;
+            margin: 0 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #ffcc00;
+        }
+
         main {
-            max-width: 400px;
+            max-width: 500px;
             margin: 80px auto;
             background: white;
             border-radius: 16px;
@@ -32,10 +53,13 @@
             color: #333;
             margin-bottom: 8px;
             display: block;
+            text-align: left;
         }
 
+        input[type="text"],
         input[type="email"],
-        input[type="password"] {
+        input[type="password"],
+        select {
             width: 100%;
             padding: 12px;
             font-size: 1rem;
@@ -60,45 +84,48 @@
             background-color: #003b6f;
         }
 
-        p {
-            font-size: 1rem;
-            color: #666;
-        }
-
-        .success-message {
+        .success {
             color: green;
-            font-size: 1.1rem;
-            margin-top: 20px;
         }
 
-        a {
-            color: #005b96;
-            text-decoration: none;
-        }
-
-        a:hover {
-            color: #ffcc00;
+        .error {
+            color: red;
         }
     </style>
 </head>
 <body>
+    <nav>
+        <a href="{{ url_for('pacientes') }}">Pacientes</a>
+        <a href="{{ url_for('enfermedades') }}">Enfermedades</a>
+        <a href="{{ url_for('pruebas_view') }}">Pruebas</a>
+        <a href="{{ url_for('diagnostico') }}">Diagnóstico</a>
+        <a href="{{ url_for('usuarios') }}">Usuarios</a>
+        <a href="{{ url_for('dashboard') }}">Inicio</a>
+    </nav>
+
     <main>
-        <h2>Iniciar sesión</h2>
+        <h2>Editar Usuario</h2>
         <form method="POST">
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" value="{{ usuario.nombre }}" required>
+
+            <label for="apellido">Apellido:</label>
+            <input type="text" name="apellido" value="{{ usuario.apellido }}" required>
+
             <label for="correo">Correo:</label>
-            <input type="email" name="correo" required><br>
+            <input type="email" name="correo" value="{{ usuario.correo }}" required>
 
             <label for="contrasena">Contraseña:</label>
-            <input type="password" name="contrasena" required><br>
+            <input type="password" name="contrasena">
 
-            <button type="submit">Iniciar sesión</button>
+            <label for="rol">Rol:</label>
+            <select name="rol" required>
+                <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>Administrador</option>
+                <option value="medico" {% if usuario.rol == 'medico' %}selected{% endif %}>Médico</option>
+            </select>
+
+            <button type="submit">Actualizar Usuario</button>
         </form>
-
-        <p>¿No tienes cuenta? <a href="{{ url_for('register') }}">Registrarse aquí</a></p>
-
-        {% if registro_exitoso %}
-            <p class="success-message">Registro exitoso. Ahora puedes iniciar sesión.</p>
-        {% endif %}
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
