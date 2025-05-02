@@ -75,6 +75,10 @@ def pacientes():
 def enfermedades():
     return render_template('enfermedades.html')
 
+@app.route('/dashboard/usuarios')
+def usuarios():
+    return render_template('usuarios.html')
+
 @app.route('/dashboard/diagnostico', methods=['GET', 'POST'])
 def diagnostico():
     conexion = conectar_bd()
@@ -293,6 +297,9 @@ def eliminar_prueba_postmortem(id):
     conexion.close()
     flash("Prueba post-mortem eliminada.", "success")
     return redirect(url_for('pruebas_view'))
+
+
+
 
 @app.route('/editar_prueba_laboratorio/<int:id>', methods=['GET', 'POST'])
 def editar_prueba_laboratorio(id):
