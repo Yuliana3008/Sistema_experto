@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 
 import mysql.connector
 from database import conectar_bd
@@ -130,7 +130,13 @@ def diagnostico():
             if nombre:
                 enfermedades_probables.append(nombre['nombre_enfermedad'])
 
+
+        session['resultado_diagnostico'] = enfermedades_probables
+        session['mensaje_observaciones'] = observaciones
+
         flash("Diagnóstico generado correctamente.", "success")
+        return redirect(url_for('resultado_diagnostico'))
+        
 
     # Obtener datos para mostrar el formulario
     cursor.execute("SELECT id_paciente, nombre, apellido, fecha_nacimiento, genero, direccion FROM paciente")
@@ -167,6 +173,12 @@ def diagnostico():
                            pruebas_postmortem=pruebas_postmortem,
                            enfermedades_probables=enfermedades_probables)
 
+
+@app.route('/dashboard/resultados_diagnostico')
+def resultado_diagnostico():
+    enfermedades = session.get('resultado_diagnostico', [])
+    observaciones = session.get('mensaje_observaciones', '')
+    return render_template('resultado_diagnostico.html', enfermedades=enfermedades, observaciones=observaciones)
 
 
 # Ruta para obtener los datos de un paciente por su ID (API)

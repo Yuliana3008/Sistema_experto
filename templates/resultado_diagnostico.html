@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado del Diagnóstico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f2f6fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .enfermedades {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .enfermedades li {
+            background-color: #eaf2ff;
+            margin-bottom: 10px;
+            padding: 12px 18px;
+            border-left: 6px solid #2980b9;
+            border-radius: 8px;
+            font-size: 1.1em;
+            color: #34495e;
+        }
+
+        .observaciones {
+            margin-top: 30px;
+            background-color: #fef9e7;
+            padding: 15px;
+            border-left: 6px solid #f1c40f;
+            border-radius: 8px;
+        }
+
+        .btn-volver {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-volver:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Resultado del Diagnóstico</h1>
+
+        {% if enfermedades %}
+            <p>Las posibles enfermedades detectadas son:</p>
+            <ul class="enfermedades">
+                {% for enfermedad in enfermedades %}
+                    <li>{{ enfermedad }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No se pudo determinar una enfermedad probable.</p>
+        {% endif %}
+
+        {% if observaciones %}
+        <div class="observaciones">
+            <strong>Observaciones del médico:</strong>
+            <p>{{ observaciones }}</p>
+        </div>
+        {% endif %}
+
+        <a href="{{ url_for('dashboard') }}" class="btn-volver">Volver al Dashboard</a>
+    </div>
+</body>
+</html>
