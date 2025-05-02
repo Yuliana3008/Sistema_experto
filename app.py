@@ -2,9 +2,35 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 
 import mysql.connector
 from database import conectar_bd
+from functools import wraps
+
 
 app = Flask(__name__)
 app.secret_key = 'machuelos'  # Necesaria para mostrar mensajes flash
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario' not in session or session['usuario']['rol'] != 'admin':
+            return redirect(url_for('dashboard'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+from functools import wraps
+from flask import session, redirect, url_for, flash
+
+# Decorador para verificar el rol del usuario
+def rol_requerido(*roles):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if 'usuario' not in session or session['usuario']['rol'] not in roles:
+                flash('Acceso denegado. No tienes permisos suficientes.', 'danger')
+                return redirect(url_for('dashboard'))  # O cualquier otra página de redirección
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
 
 
 @app.route('/')
@@ -25,6 +51,7 @@ def login():
 
         if resultado:
             rol = resultado[0]
+            session['usuario'] = {'rol': rol}  # Almacena el rol dentro de la sesión
             flash(f"Bienvenido, {rol}", "success")
             return redirect(url_for('dashboard'))  # Redirige a un panel de usuario
         else:
@@ -63,9 +90,23 @@ def register():
     return render_template('register.html')
 
 # Ruta para el dashboard
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    return render_template('dashboard.html')
+    # Verificar si el usuario está logueado
+    if 'usuario' not in session:
+        return redirect(url_for('login'))  # Redirige al login si no está autenticado
+
+    # Obtener el rol del usuario desde la sesión
+    usuario_rol = session['usuario']['rol']
+
+    # Verificar si es admin y mostrar el mensaje adecuado
+    if usuario_rol == 'admin':
+        mensaje_bienvenida = "¡Bienvenido al panel de administración!"
+    else:
+        mensaje_bienvenida = "¡Bienvenido al panel de médico!"
+
+    return render_template('dashboard.html', mensaje_bienvenida=mensaje_bienvenida)
+
 
 @app.route('/dashboard/pacientes')
 def pacientes():
@@ -76,11 +117,61 @@ def enfermedades():
     return render_template('enfermedades.html')
 
 @app.route('/dashboard/usuarios')
+@admin_required
 def usuarios():
-    return render_template('usuarios.html')
+    print(session)  # Verifica qué hay en la sesión
+    conexion = conectar_bd()
+    cursor = conexion.cursor(dictionary=True)
+    cursor.execute("SELECT id_usuario, nombre, apellido, correo, rol FROM usuario")
+    usuarios = cursor.fetchall()
+    conexion.close()
+    return render_template("usuarios.html", usuarios=usuarios)
+
+
+
+@app.route('/dashboard/usuarios/editar/<int:id_usuario>', methods=['GET', 'POST'])
+@admin_required
+def editar_usuario(id_usuario):
+    conexion = conectar_bd()
+    cursor = conexion.cursor(dictionary=True)
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        correo = request.form['correo']
+        rol = request.form['rol']
+        cursor.execute("""
+            UPDATE usuario
+            SET nombre=%s, apellido=%s, correo=%s, rol=%s
+            WHERE id_usuario=%s
+        """, (nombre, apellido, correo, rol, id_usuario))
+        conexion.commit()
+        conexion.close()
+        flash('Usuario actualizado exitosamente.', 'success')
+        return redirect(url_for('vista_usuarios'))
+    else:
+        cursor.execute("SELECT * FROM usuario WHERE id_usuario = %s", (id_usuario,))
+        usuario = cursor.fetchone()
+        conexion.close()
+        return render_template("editar_usuario.html", usuario=usuario)
+
+@app.route('/dashboard/usuarios/eliminar/<int:id_usuario>')
+@admin_required
+def eliminar_usuario(id_usuario):
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+    cursor.execute("DELETE FROM usuario WHERE id_usuario = %s", (id_usuario,))
+    conexion.commit()
+    conexion.close()
+    flash('Usuario eliminado correctamente.', 'success')
+    return redirect(url_for('vista_usuarios'))
+
+
 
 @app.route('/dashboard/diagnostico', methods=['GET', 'POST'])
-def diagnostico():
+@rol_requerido('admin', 'medico')
+def diagnostico(): 
+
+
     conexion = conectar_bd()
     cursor = conexion.cursor(dictionary=True)
 

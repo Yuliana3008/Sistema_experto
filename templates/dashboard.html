@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Médico</title>
+    <title>Dashboard</title>
     <style>
         body {
             margin: 0;
@@ -51,6 +51,13 @@
             font-size: 1.1rem;
             color: #666;
         }
+
+        .mensaje-bienvenida {
+            font-size: 1.4rem;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
@@ -62,7 +69,8 @@
         <a href="{{ url_for('usuarios') }}">Usuarios</a>
     </nav>
     <main>
-        <h1>¡Bienvenido al Dashboard del médico!</h1>
+        <h1>¡Bienvenido al Dashboard!</h1>
+        <p class="mensaje-bienvenida">{{ mensaje_bienvenida }}</p>
         <p>Selecciona una opción del menú para comenzar.</p>
     </main>
 </body>

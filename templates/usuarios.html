@@ -1,0 +1,118 @@
+<!-- templates/usuarios.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #cce0f4, #a3c4dc);
+        }
+
+        nav {
+            background-color: #005b96;
+            display: flex;
+            justify-content: center;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        nav a {
+            color: white;
+            margin: 0 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #ffcc00;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 80px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 40px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #005b96;
+            color: white;
+        }
+
+        td a {
+            color: #005b96;
+            text-decoration: none;
+        }
+
+        td a:hover {
+            color: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('pacientes') }}">Pacientes</a>
+        <a href="{{ url_for('enfermedades') }}">Enfermedades</a>
+        <a href="{{ url_for('pruebas_view') }}">Pruebas</a>
+        <a href="{{ url_for('diagnostico') }}">Diagnóstico</a>
+        <a href="{{ url_for('usuarios') }}">Usuarios</a>
+    </nav>
+    <main>
+        <h2>Gestión de Usuarios</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario.id_usuario }}</td>
+                        <td>{{ usuario.nombre }}</td>
+                        <td>{{ usuario.apellido }}</td>
+                        <td>{{ usuario.correo }}</td>
+                        <td>{{ usuario.rol }}</td>
+                        <td>
+                            <a href="{{ url_for('editar_usuario', id_usuario=usuario.id_usuario) }}">Editar</a> |
+                            <a href="{{ url_for('eliminar_usuario', id_usuario=usuario.id_usuario) }}"
+                               onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
