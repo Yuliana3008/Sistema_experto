@@ -228,6 +228,7 @@ def diagnostico():
 
         session['resultado_diagnostico'] = enfermedades_probables
         session['mensaje_observaciones'] = observaciones
+        session['paciente_id'] = paciente_id  
 
         flash("Diagnóstico generado correctamente.", "success")
         return redirect(url_for('resultado_diagnostico'))
@@ -273,7 +274,28 @@ def diagnostico():
 def resultado_diagnostico():
     enfermedades = session.get('resultado_diagnostico', [])
     observaciones = session.get('mensaje_observaciones', '')
-    return render_template('resultado_diagnostico.html', enfermedades=enfermedades, observaciones=observaciones)
+    paciente_id = session.get('paciente_id')
+
+    if not paciente_id:
+        flash("No se encontró información del paciente.", "warning")
+        return redirect(url_for('dashboard'))
+
+    conexion = conectar_bd()
+    cursor = conexion.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT nombre, apellido, fecha_nacimiento, genero, direccion 
+        FROM paciente 
+        WHERE id_paciente = %s
+    """, (paciente_id,))
+    paciente = cursor.fetchone()
+    cursor.close()
+    conexion.close()
+
+    return render_template('resultado_diagnostico.html', 
+                           enfermedades=enfermedades, 
+                           observaciones=observaciones, 
+                           paciente=paciente)
+
 
 
 # Ruta para obtener los datos de un paciente por su ID (API)

@@ -21,9 +21,22 @@
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
+        h1, h2 {
             text-align: center;
             color: #2c3e50;
+        }
+
+        .paciente-info {
+            background-color: #ecf0f1;
+            padding: 15px 20px;
+            border-left: 6px solid #7f8c8d;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .paciente-info p {
+            margin: 5px 0;
+            color: #34495e;
         }
 
         .enfermedades {
@@ -70,6 +83,16 @@
 <body>
     <div class="container">
         <h1>Resultado del Diagnóstico</h1>
+
+        {% if paciente %}
+        <div class="paciente-info">
+            <h2>Información del Paciente</h2>
+            <p><strong>Nombre:</strong> {{ paciente.nombre }} {{ paciente.apellido }}</p>
+            <p><strong>Fecha de Nacimiento:</strong> {{ paciente.fecha_nacimiento }}</p>
+            <p><strong>Género:</strong> {{ paciente.genero }}</p>
+            <p><strong>Dirección:</strong> {{ paciente.direccion }}</p>
+        </div>
+        {% endif %}
 
         {% if enfermedades %}
             <p>Las posibles enfermedades detectadas son:</p>
