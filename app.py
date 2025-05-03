@@ -189,22 +189,22 @@ def diagnostico():
         enfermedad_scores = {}
 
         # Función para contar coincidencias por enfermedad
-        def contar_coincidencias(query, items):
+        def contar_coincidencias(query, items, peso):
             for item in items:
                 cursor.execute(query, (item,))
                 for row in cursor.fetchall():
                     enf_id = row['id_enfermedad']
-                    enfermedad_scores[enf_id] = enfermedad_scores.get(enf_id, 0) + 1
+                    enfermedad_scores[enf_id] = enfermedad_scores.get(enf_id, 0) + peso
 
         # Consultas para signos, síntomas, pruebas
         if signos:
-            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_signo WHERE id_signo = %s", signos)
+            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_signo WHERE id_signo = %s", signos, 1.0)
         if sintomas:
-            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_sintoma WHERE id_sintoma = %s", sintomas)
+            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_sintoma WHERE id_sintoma = %s", sintomas, 1.0)
         if pruebas_laboratorio:
-            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_prueba WHERE id_prueba_laboratorio = %s", pruebas_laboratorio)
+            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_prueba WHERE id_prueba_laboratorio = %s", pruebas_laboratorio, 1.5)
         if pruebas_postmortem:
-            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_pruebapost WHERE id_prueba_post = %s", pruebas_postmortem)
+            contar_coincidencias("SELECT id_enfermedad FROM enfermedad_pruebapost WHERE id_prueba_post = %s", pruebas_postmortem, 2.0)
 
         # Obtener las 3 enfermedades con mayor puntuación
         top_enfermedades = sorted(enfermedad_scores.items(), key=lambda x: x[1], reverse=True)[:3]
